@@ -1,0 +1,69 @@
+RootDir = "."
+
+ConfigDir = "$RootDir$"
+DataDir = "$RootDir$"
+OutputDir = "$RootDir$/Output"
+ModelDir = "$OutputDir$/Models"
+
+ndlMacros = "$ConfigDir$/Macros.ndl"
+
+precision = "float"
+deviceId = 0
+imageLayout = "cudnn"
+# override the above as follows when running on CPU:
+# deviceId = -1
+
+# If set to true, always initialize the network on CPU, making initialization consistent across CPU and GPU targets (for testing).
+initOnCPUOnly=true
+
+command =  Train    # DumpNodeInfo    #
+
+modelPath = "$ModelDir$/01_Convolution"
+
+#stderr = "$OutputDir$/01_Conv"
+traceLevel = 1
+numMBsToShowResult = 50
+
+Train = [
+    action = "train"
+
+     NDLNetworkBuilder = [
+        networkDescription = "$ConfigDir$/01_Convolution.ndl"
+    ]
+    
+    SGD = [
+        epochSize = 0
+        minibatchSize = 128
+        learningRatesPerMB = 0.0003
+        momentumPerMB = 0.9*20:0.99
+        maxEpochs = 30
+        L2RegWeight = 0.03
+        dropoutRate = 0*1:0.5
+    ]
+    
+     reader = [
+        readerType = "UCIFastReader"
+        file = "$DataDir$/facedetector24X24X3V3.txt"
+        randomize = "none"
+        # Setting minibatchMode="full" is a temporary fix to prevent an exception until the reader is migrated to the new reader.
+        minibatchMode="full"
+        features = [
+            dim = 1728
+            start = 1
+        ]
+        labels = [
+            dim = 1
+            start = 0
+            labelDim = 2
+            labelMappingFile = "$DataDir$/labelsmap.txt"
+        ]
+    ]
+     
+]
+
+DumpNodeInfo = [
+    action = "dumpNode"
+	modelPath="$ModelDir$/01_Convolution.15"
+#	nodeName=h2.W
+    printValues = true
+]

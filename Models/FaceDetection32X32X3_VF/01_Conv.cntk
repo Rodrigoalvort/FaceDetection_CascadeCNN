@@ -1,0 +1,93 @@
+RootDir = "."
+
+ConfigDir = "$RootDir$"
+DataDir = "$RootDir$"
+OutputDir = "$RootDir$/Output"
+ModelDir = "$OutputDir$/Models"
+
+ndlMacros = "$ConfigDir$/Macros.ndl"
+
+precision = "float"
+deviceId = 0
+imageLayout = "cudnn"
+# override the above as follows when running on CPU:
+# deviceId = -1
+
+# If set to true, always initialize the network on CPU, making initialization consistent across CPU and GPU targets (for testing).
+initOnCPUOnly=true
+
+prefetch = "true"
+
+command =DumpNodeInfo  #Test #Train
+
+modelPath = "$ModelDir$/01_Convolution.101"
+
+#stderr = "$OutputDir$/01_Conv"  
+traceLevel = 1
+numMBsToShowResult = 100
+
+Train = [
+    action = "train"
+
+     NDLNetworkBuilder = [
+        networkDescription = "$ConfigDir$/01_Convolution.ndl"
+    ]
+    
+    SGD = [
+        epochSize =0
+        minibatchSize = 80
+        learningRatesPerMB = 0.01*15:0.005*10:0.001*10:0.0005*10:0.00025*5:0.0001*20:0.00001*30:0.000001
+        momentumPerMB = 0.09
+        maxEpochs = 2000
+        L2RegWeight = 0.03
+        dropoutRate = 0*2:0.5
+    ]
+    
+    reader = [
+        readerType = "UCIFastReader"
+        file = "$DataDir$/facedetectorsamples.txt"
+        randomize = "auto"
+        # Setting minibatchMode="full" is a temporary fix to prevent an exception until the reader is migrated to the new reader.
+        minibatchMode="full"
+        features = [
+            dim = 3072
+            start = 1
+        ]
+        labels = [
+            dim = 1
+            start = 0
+            labelDim = 2
+            labelMappingFile = "$DataDir$/labelsmap.txt"
+        ]
+    ]    
+]
+
+
+Test = [
+    action = "test"
+    # Set minibatch size for testing.
+    minibatchSize = 120
+
+    reader = [
+         readerType = "UCIFastReader"
+        file = "$DataDir$/facedetectorsamples.txt"
+       randomize = "none"
+        features = [
+            dim = 3072
+            start = 1
+        ]
+        labels = [
+            dim = 1
+            start = 0
+            labelDim = 2
+            labelMappingFile = "$DataDir$/labelsmap.txt"
+        ]
+    ]    
+]
+
+DumpNodeInfo = [
+    action = "dumpNode"
+	modelPath="Models/01_Convolution.99"
+	nodeName=h1.W
+    printValues = true
+]
