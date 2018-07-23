@@ -1,2 +1,5 @@
 # FaceDetection_CascadeCNN
-Investigación para la detección de rostros mediante el uso  de redes convolucionales en cascada 
+Investigación para la detección de rostros mediante el uso  de redes convolucionales en cascada.
+sistema de visión artificial para la detección de rostros en imágenes de espectro visible.  Para la exploración de las imágenes se utilizaron ventanas deslizantes y para la detección de rostros se utilizaron  tres redes neuronales convolucionales con diferentes topologías conectadas en cascada. Las redes neuronales convolucionales se entrenaron con un data-set que incluyó diferentes escalas de enventanado, transformaciones geométricas y de intensidad, con el fin de generar mayor varianza en las muestras de rostros y la minería de falsos positivos con patrones que incrementan su complejidad para cada etapa del clasificador. Se propuso un algoritmo de post-clasificación para identificar la intersección entre dos o más detecciones y evitar la clasificación de rostros de manera redundante. El sistema se validó de acuerdo con  el protocolo de validación  Face Detection Data set and Benchmark  FDDB  compuesto por un  conjunto de  2485 imágenes y 5171 rostros, y alcanzó una tasa de acierto del 78% para 2000 falsos positivos.
+
+
